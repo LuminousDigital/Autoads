@@ -82,8 +82,8 @@ class PaymentController extends Controller
         $data->btc_amount      = 0;
         $data->btc_wallet      = "";
         $data->trx             = getTrx();
-        $data->success_url     = route('advertiser.deposit.history');
-        $data->failed_url      = route('advertiser.deposit.history');
+        $data->success_url     = urlPath('advertiser.deposit.history');
+        $data->failed_url      = urlPath('advertiser.deposit.history');
         $data->save();
         session()->put('Track', $data->trx);
         return to_route('advertiser.deposit.confirm');

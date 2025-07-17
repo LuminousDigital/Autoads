@@ -18,7 +18,6 @@
                 @csrf
                 <div class="modal-body">
                     <p class="question"></p>
-                    {{ $slot }}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn {{$size}} {{$btnDark}}" data-bs-dismiss="modal">@lang('No')</button>

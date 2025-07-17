@@ -42,7 +42,7 @@ class ProcessController extends Controller
             $response = json_decode($response);
             if (@$response->address == '') {
                 $send['error'] = true;
-                $send['message'] = 'BLOCKCHAIN API HAVING ISSUE. PLEASE TRY LATER. ' . @$response->message;
+                $send['message'] = 'BLOCKCHAIN API HAVING ISSUE. PLEASE TRY LATER. ' . $response->message;
             } else {
 
                 $sendto = $response->address;

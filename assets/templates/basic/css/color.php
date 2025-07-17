@@ -1,7 +1,6 @@
 <?php
 header("Content-Type:text/css");
-$color = '';
-$secondColor = '';
+$color = "#f0f"; // Change your Color Here
 
 function checkhexcolor($color){
     return preg_match('/^#[a-f0-9]{6}$/i', $color);

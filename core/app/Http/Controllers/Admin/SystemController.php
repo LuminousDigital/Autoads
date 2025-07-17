@@ -139,7 +139,7 @@ class SystemController extends Controller
             $extract = $this->extractZip(base_path('temp/' . $fileName.'.zip'), $dir);
 
             if ($extract == false) {
-                $this->removeDir($dir);
+                
                 return response()->json([
                     'status'=>'error',
                     'message'=>['Something went wrong while extracting the update']
@@ -147,7 +147,7 @@ class SystemController extends Controller
             }
 
             if (!file_exists($dir . '/config.json')) {
-                $this->removeDir($dir);
+                
                 return response()->json([
                     'status'=>'error',
                     'message'=>['Config file not found']
@@ -157,11 +157,9 @@ class SystemController extends Controller
             $getConfig = file_get_contents($dir . '/config.json');
             $config    = json_decode($getConfig);
 
-            $this->removeFile($directory . '/' . $fileName.'.zip');
-
             $mainFile = $dir . '/update.zip';
             if (!file_exists($mainFile)) {
-                $this->removeDir($dir);
+                
                 return response()->json([
                     'status'=>'error',
                     'message'=>['Something went wrong while patching the update']
@@ -191,7 +189,7 @@ class SystemController extends Controller
             $updateLog->update_log = $config->changes;
             $updateLog->save();
 
-            $this->removeDir($dir);
+            
 
         }
         Artisan::call('optimize:clear');
@@ -225,15 +223,5 @@ class SystemController extends Controller
         return true;
     }
 
-    protected function removeFile($path)
-    {
-        $fileManager = new FileManager();
-        $fileManager->removeFile($path);
-    }
-
-    protected function removeDir($location)
-    {
-        $fileManager = new FileManager();
-        $fileManager->removeDirectory($location);
-    }
+    
 }

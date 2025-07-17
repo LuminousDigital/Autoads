@@ -22,8 +22,8 @@ class ProcessController extends Controller
         $val['pay_method'] = " ";
         $val['amount'] = getAmount($deposit->final_amount);
         $val['currency'] = $cashmaal->currency;
-        $val['succes_url'] = $deposit->success_url;
-        $val['cancel_url'] = $deposit->failed_url;
+        $val['succes_url'] = route('home').$deposit->success_url;
+        $val['cancel_url'] = route('home').$deposit->failed_url;
         $val['client_email'] =  auth()->guard('advertiser')->user()->email;
         $val['web_id'] = $param->web_id;
         $val['order_id'] = $deposit->trx;

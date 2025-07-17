@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('panel')
-    <div class="row gy-4 justify-content-center">
-        <div class="col-xl-4 col-md-6">
+    <div class="row mb-none-30 justify-content-center">
+        <div class="col-xl-4 col-md-6 mb-30">
             <div class="card overflow-hidden box--shadow1">
                 <div class="card-body">
                     <h5 class="mb-20 text-muted">@lang('Deposit Via') @if($deposit->method_code < 5000) {{ __(@$deposit->gateway->name) }} @else @lang('Google Pay') @endif</h5>
@@ -57,8 +57,9 @@
                         </li>
                         @if($deposit->admin_feedback)
                             <li class="list-group-item">
-                                <span class="text-black">@lang('Admin Response')</span>
-                                <p class="mt-1">{{__($deposit->admin_feedback)}}</p>
+                                <strong>@lang('Admin Response')</strong>
+                                <br>
+                                <p>{{__($deposit->admin_feedback)}}</p>
                             </li>
                         @endif
                     </ul>
@@ -66,7 +67,7 @@
             </div>
         </div>
         @if($details || $deposit->status == Status::PAYMENT_PENDING)
-        <div class="col-xl-8 col-md-6">
+        <div class="col-xl-8 col-md-6 mb-30">
             <div class="card overflow-hidden box--shadow1">
                 <div class="card-body">
                     <h5 class="card-title border-bottom pb-2">@lang('User Deposit Information')</h5>

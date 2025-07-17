@@ -27,13 +27,18 @@ trait SupportTicketManager
         if (!$user) {
             abort(404);
         }
-
+      
         $pageTitle = "Support Tickets";
         $supports = SupportTicket::where($this->column, $user->id)->orderBy('id', 'desc')->paginate(getPaginate());
         if($this->apiRequest){
             $notify[] = 'Support ticket data';
-            return responseSuccess('tickets', $notify, [
-                'tickets' => $supports
+            return response()->json([
+                'remark'=>'tickets',
+                'status'=>'success',
+                'message'=>['success'=>$notify],
+                'data'=>[
+                    'tickets'=>$supports
+                ]
             ]);
         }
         return view("Template::$this->userType" . '.support.index', compact('supports', 'pageTitle'));
@@ -65,7 +70,11 @@ trait SupportTicketManager
         if ($this->apiRequest) {
             $validator = Validator::make($request->all(), $validationRule);
             if ($validator->fails()) {
-                return responseError('validation_error', $validator->errors());
+                return response()->json([
+                    'remark'=>'validation_error',
+                    'status'=>'error',
+                    'message'=>['error'=>$validator->errors()->all()],
+                ]);
             }
         }else{
             $request->validate($validationRule);
@@ -99,7 +108,11 @@ trait SupportTicketManager
             if ($uploadAttachments != 200){
                 if($this->apiRequest){
                     $notify[] = 'File could not upload';
-                    return responseError('file_upload_error', $notify);
+                    return response()->json([
+                        'remark'=>'file_upload_error',
+                        'status'=>'error',
+                        'message'=>['error'=>$notify],
+                    ]);
                 }
                 return back()->withNotify($uploadAttachments);
             }
@@ -107,8 +120,13 @@ trait SupportTicketManager
 
         if($this->apiRequest){
             $notify[] = 'Ticket opened successfully';
-            return responseSuccess('ticket_open', $notify, [
-                'ticket' => $ticket
+            return response()->json([
+                'remark'=>'ticket_open',
+                'status'=>'success',
+                'message'=>['success'=>$notify],
+                'data'=>[
+                    'ticket'=>$ticket
+                ]
             ]);
         }
 
@@ -131,7 +149,11 @@ trait SupportTicketManager
         if (!$myTicket) {
             if ($this->apiRequest) {
                 $notify[] = 'Ticket not found';
-                return responseError('ticket_not_found', $notify);
+                return response()->json([
+                    'remark'=>'ticket_not_found',
+                    'status'=>'error',
+                    'message'=>['error'=>$notify],
+                ]);
             }
             abort(404);
         }
@@ -142,19 +164,27 @@ trait SupportTicketManager
             } else {
                 if ($this->apiRequest) {
                     $notify[] = 'Unauthorized user';
-                    return responseError('unauthorized_user', $notify);
+                    return response()->json([
+                        'remark'=>'unauthorized_user',
+                        'status'=>'error',
+                        'message'=>['error'=>$notify],
+                    ]);
                 }
                 return to_route($this->userType . '.login');
             }
         }
 
 
-
+      
         $myTicket = SupportTicket::where('ticket', $ticket)->where($this->column, $userId)->orderBy('id', 'desc')->first();
         if (!$myTicket) {
             if ($this->apiRequest) {
                 $notify[] = 'Ticket not found';
-                return responseError('ticket_not_found', $notify);
+                return response()->json([
+                    'remark'=>'ticket_not_found',
+                    'status'=>'error',
+                    'message'=>['error'=>$notify],
+                ]);
             }
 
             abort(404);
@@ -163,9 +193,14 @@ trait SupportTicketManager
 
         if ($this->apiRequest) {
             $notify[] = 'Support ticket view';
-            return responseSuccess('ticket_view', $notify, [
-                'my_ticket' => $myTicket,
-                'messages'  => $messages,
+            return response()->json([
+                'remark'=>'ticket_view',
+                'status'=>'success',
+                'message'=>['success'=>$notify],
+                'data'=>[
+                    'my_ticket'=>$myTicket,
+                    'messages'=>$messages,
+                ]
             ]);
         }
 
@@ -184,14 +219,22 @@ trait SupportTicketManager
         if (!$ticket) {
             if ($this->apiRequest) {
                 $notify[] = 'Ticket not found';
-                return responseError('ticket_not_found', $notify);
+                return response()->json([
+                    'remark'=>'ticket_not_found',
+                    'status'=>'error',
+                    'message'=>['error'=>$notify],
+                ]);
             }
             abort(404);
         }
         if (($this->userType == 'user') && ($userId != $ticket->user_id)) {
             if ($this->apiRequest) {
                 $notify[] = 'Unauthorized user';
-                return responseError('unauthorized_user', $notify);
+                return response()->json([
+                    'remark'=>'unauthorized',
+                    'status'=>'error',
+                    'message'=>['error'=>$notify],
+                ]);
             }
             abort(404);
         }
@@ -203,7 +246,11 @@ trait SupportTicketManager
         if ($this->apiRequest) {
             $validator = Validator::make($request->all(), $validationRule);
             if ($validator->fails()) {
-                return responseError('validation_error', $validator->errors());
+                return response()->json([
+                    'remark'=>'validation_error',
+                    'status'=>'error',
+                    'message'=>['error'=>$validator->errors()->all()],
+                ]);
             }
         }else{
             $request->validate($validationRule);
@@ -225,7 +272,11 @@ trait SupportTicketManager
             if ($uploadAttachments != 200){
                 if($this->apiRequest){
                     $notify[] = 'File could not upload';
-                    return responseError('file_upload_error', $notify);
+                    return response()->json([
+                        'remark'=>'file_upload_error',
+                        'status'=>'error',
+                        'message'=>['error'=>$notify],
+                    ]);
                 }
                 return back()->withNotify($uploadAttachments);
             }
@@ -251,9 +302,14 @@ trait SupportTicketManager
 
         if($this->apiRequest){
             $notify[] = 'Ticket replied successfully';
-            return responseSuccess('ticket_replied', $notify, [
-                'ticket'=>$ticket,
-                'message'=>$message
+            return response()->json([
+                'remark'=>'ticket_replied',
+                'status'=>'success',
+                'message'=>['success'=>$notify],
+                'data'=>[
+                    'ticket'=>$ticket,
+                    'message'=>$message
+                ]
             ]);
         }
 
@@ -327,7 +383,11 @@ trait SupportTicketManager
         if (!$ticket) {
             if ($this->apiRequest) {
                 $notify[] = 'Ticket not found';
-                return responseError('ticket_not_found', $notify);
+                return response()->json([
+                    'remark'=>'ticket_not_found',
+                    'status'=>'error',
+                    'message'=>['error'=>$notify],
+                ]);
             }
             abort(404);
         }
@@ -336,7 +396,11 @@ trait SupportTicketManager
             if ($user->id != $ticket->$column) {
                 if ($this->apiRequest) {
                     $notify[] = 'Unauthorized user';
-                    return responseError('unauthorized', $notify);
+                    return response()->json([
+                        'remark'=>'unauthorized',
+                        'status'=>'error',
+                        'message'=>['error'=>$notify],
+                    ]);
                 }
                 abort(403);
             }
@@ -347,7 +411,11 @@ trait SupportTicketManager
 
         if($this->apiRequest){
             $notify[] = 'Ticket closed successfully';
-            return responseSuccess('ticket_closed', $notify);
+            return response()->json([
+                'remark'=>'ticket_closed',
+                'status'=>'success',
+                'message'=>['success'=>$notify]
+            ]);
         }
 
         $notify[] = ['success', 'Support ticket closed successfully!'];
@@ -360,29 +428,20 @@ trait SupportTicketManager
         if (!$attachment) {
             if ($this->apiRequest) {
                 $notify[] = 'Attachment not found';
-                return responseError('attachment_not_found', $notify);
+                return response()->json([
+                    'remark'=>'attachment_not_found',
+                    'status'=>'error',
+                    'message'=>['error'=>$notify],
+                ]);
             }
             abort(404);
         }
         $file = $attachment->attachment;
         $path = getFilePath('ticket');
         $fullPath = $path . '/' . $file;
-        if (!file_exists($fullPath)) {
-            if ($this->apiRequest) {
-                $notify[] = 'Attachment not found';
-                return responseError('attachment_not_found', $notify);
-            }
-            $notify[] = ['error', 'Attachment not found'];
-            return back()->withNotify($notify);
-        }
         $title = slug($attachment->supportMessage->ticket->subject);
         $ext = pathinfo($file, PATHINFO_EXTENSION);
         $mimetype = mime_content_type($fullPath);
-        if (!headers_sent()) {
-            header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Methods: GET,');
-            header('Access-Control-Allow-Headers: Content-Type');
-        }
         header('Content-Disposition: attachment; filename="' . $title . '.' . $ext . '";');
         header("Content-Type: " . $mimetype);
         return readfile($fullPath);

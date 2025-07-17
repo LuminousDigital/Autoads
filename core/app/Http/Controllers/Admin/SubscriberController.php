@@ -67,7 +67,7 @@ class SubscriberController extends Controller
             ];
             notify($user, 'DEFAULT', [
                 'subject' => $request->subject,
-                'message' => $request->message,
+                'message' => $request->body,
             ], ['email'], createLog: false);
         }
 

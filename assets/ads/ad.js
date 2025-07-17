@@ -31,3 +31,5 @@ window.onload = async function () {
 function hideAdverTiseMent(elem) {
     elem.parentElement.style.display = "none";
 }
+
+console.log("yes");

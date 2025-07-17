@@ -27,7 +27,7 @@
                                     </td>
 
                                     <td class="fw-bold">{{ __($method->currency) }}</td>
-                                    <td class="fw-bold">{{ showAmount($method->fixed_charge)}} {{ (0 < $method->percent_charge) ? ' + '. showAmount($method->percent_charge,currencyFormat:false) .' %' : '' }} </td>
+                                    <td class="fw-bold">{{ showAmount($method->fixed_charge)}} {{ (0 < $method->percent_charge) ? ' + '. showAmount($method->percent_charge) .' %' : '' }} </td>
                                     <td class="fw-bold">{{ showAmount($method->min_limit) }}
                                         @lang('to') {{ showAmount($method->max_limit) }}</td>
                                     <td>
@@ -66,6 +66,8 @@
     </div>
     <x-confirmation-modal />
 @endsection
+
+
 
 @push('breadcrumb-plugins')
     <div class="input-group w-auto search-form">

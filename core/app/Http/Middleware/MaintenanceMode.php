@@ -12,10 +12,6 @@ class MaintenanceMode
         if (gs('maintenance_mode') == Status::ENABLE) {
 
             if ($request->is('api/*')) {
-                if($request->is('api/sections/maintenance')){
-                    return $next($request);
-                }
-
                 $notify[] = 'Our application is currently in maintenance mode';
                 return response()->json([
                     'remark'=>'maintenance_mode',

@@ -1,6 +1,6 @@
 @extends($activeTemplate . 'layouts.app')
 @section('panel')
-
+    
     <section class="account">
         <div class="account-inner">
             <div class="account-inner__left">
@@ -20,7 +20,8 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="form--label">@lang('Username')</label>
-                                    <input type="text" class="form--control checkUser" name="username" value="{{ old('username') }}" required>
+                                    <input type="text" class=" form--control checkUser" required
+                                        placeholder="@lang('Username')" name="username" value="{{ old('username') }}">
                                     <small class="text--danger usernameExist"></small>
                                 </div>
                             </div>

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Lib\RequiredConfig;
 use App\Models\PlanPrice;
 use Illuminate\Http\Request;
 
@@ -39,8 +38,6 @@ class PlanController extends Controller
         $plan->price  = $request->price;
         $plan->credit = $request->credit;
         $plan->save();
-
-        RequiredConfig::configured('advertiser_plan');
 
         $notify[] = ['success', $notification];
         return back()->withNotify($notify);

@@ -6,6 +6,7 @@ use App\Lib\VisitorManager;
 
 class VisitorController extends Controller
 {
+
     public function getAdvertise($pubId, $slug, $currentUrl)
     {
         header("Access-Control-Allow-Origin: *");

@@ -32,18 +32,10 @@ class ProcessController extends Controller
 
     public function ipn(Request $request)
     {
-        $track = $request->trx ?? null;
-        if (!$track) {
-            $track = Session::get('Track');
-        }
-
+        $track = Session::get('Track');
         $deposit = Deposit::where('trx', $track)->where('status',Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->first();
-
-        $apiRequest = $deposit->is_web;
-
         if ($deposit->status == Status::PAYMENT_SUCCESS) {
             $notify[] = ['error', 'Invalid request.'];
-            if ($apiRequest) return responseError('invalid_request', $notify);
             return redirect($deposit->failed_url)->withNotify($notify);
         }
 
@@ -91,14 +83,9 @@ class ProcessController extends Controller
         if (($response != null) && ($response->getResponseCode() == "1")) {
             PaymentController::userDataUpdate($deposit);
             $notify[] = ['success', 'Payment captured successfully'];
-
-            if($apiRequest) return responseSuccess('payment_success', $notify);
-
             return redirect($deposit->success_url)->withNotify($notify);
         }
-
         $notify[] = ['error','Something went wrong'];
-        if($apiRequest) return responseError('payment_failed', $notify);
         return back()->withNotify($notify);
 
     }

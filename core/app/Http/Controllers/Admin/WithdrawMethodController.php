@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Lib\FormProcessor;
-use App\Lib\RequiredConfig;
 use App\Models\WithdrawMethod;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
@@ -70,7 +69,6 @@ class WithdrawMethodController extends Controller
         $method->description = $request->instruction;
         $method->save();
 
-        RequiredConfig::configured('withdrawal_method');
 
         $notify[] = ['success', 'Withdraw method added successfully'];
         return to_route('admin.withdraw.method.index')->withNotify($notify);

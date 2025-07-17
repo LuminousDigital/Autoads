@@ -19,8 +19,8 @@ class ProcessController extends Controller{
         $postData['currency']        = $deposit->method_currency;
         $postData['tran_id']         = $deposit->trx;
         $postData['success_url']     = route('ipn.'.$alias);
-        $postData['fail_url']        = $deposit->failed_url;
-        $postData['cancel_url']      = $deposit->failed_url;
+        $postData['fail_url']        = route('home').$deposit->failed_url;
+        $postData['cancel_url']      = route('home').$deposit->failed_url;
         $postData['emi_option'] = "0";
 
         if(auth()->check()){

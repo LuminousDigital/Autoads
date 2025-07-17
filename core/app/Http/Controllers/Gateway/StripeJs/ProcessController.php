@@ -32,25 +32,18 @@ class ProcessController extends Controller
         $send['src'] = "https://checkout.stripe.com/checkout.js";
         $send['view'] = 'advertiser.payment.' . $alias;
         $send['method'] = 'post';
-        $send['url'] = route('ipn.'.$deposit->gateway->alias).($deposit->is_web ? '?trx='.encrypt($deposit->trx) : '');
+        $send['url'] = route('ipn.'.$deposit->gateway->alias);
         return json_encode($send);
     }
 
     public function ipn(Request $request)
     {
 
-        try{
-            $track = $request->trx ? decrypt($request->trx) : Session::get('Track');
-            $deposit = Deposit::where('trx', $track)->orderBy('id', 'DESC')->first();
-            abort_if(!$deposit,404);
-        }catch(\Exception $e){
-            abort(500);
-        }
-
+        $track = Session::get('Track');
         $deposit = Deposit::where('trx', $track)->orderBy('id', 'DESC')->first();
         if ($deposit->status == Status::PAYMENT_SUCCESS) {
             $notify[] = ['error', 'Invalid request.'];
-            return redirect()->away($deposit->failed_url)->withNotify($notify);
+            return redirect($deposit->failed_url)->withNotify($notify);
         }
         $StripeJSAcc = json_decode($deposit->gatewayCurrency()->gateway_parameter);
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Models\NotificationTemplate;
-use App\Lib\RequiredConfig;
+use App\Notify\Sms;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
 
@@ -28,8 +28,6 @@ class NotificationController extends Controller
         $general->email_from_name = $request->email_from_name;
         $general->email_template = $request->email_template;
         $general->save();
-
-        RequiredConfig::configured('notification_template');
 
         $notify[] = ['success','Global email template updated successfully'];
         return back()->withNotify($notify);
@@ -175,6 +173,7 @@ class NotificationController extends Controller
         $general->save();
         $notify[] = ['success', 'Email settings updated successfully'];
         return back()->withNotify($notify);
+		
     }
 
     public function emailTest(Request $request){
@@ -331,7 +330,7 @@ class NotificationController extends Controller
             'messagingSenderId' => 'required',
             'appId'             => 'required',
             'measurementId'     => 'required',
-
+            
         ]);
         $data = [
             'apiKey'            => $request->apiKey,
@@ -341,7 +340,7 @@ class NotificationController extends Controller
             'messagingSenderId' => $request->messagingSenderId,
             'appId'             => $request->appId,
             'measurementId'     => $request->measurementId,
-
+           
         ];
         $general                  = gs();
         $general->firebase_config = $data;

@@ -21,7 +21,7 @@
                         </div>
                         <div class="col-sm-6">
                             <x-widget link="javascript:void(0)" style="6" icon="fa-solid fa-paper-plane" :title="$viaText . ' has yet to be sent'" :viewMoreIcon=false
-                                value="{{ @$sessionData['total_entities'] - @$sessionData['total_sent'] }}" bg="warning" />
+                                value="{{ @$sessionData['total_publisher'] - @$sessionData['total_sent'] }}" bg="warning" />
                         </div>
                         <div class="col-sm-6">
                             <x-widget link="javascript:void(0)" style="6" icon="fas fa-envelope" :title="$viaText . ' per batch'" value="{{ @$sessionData['batch'] }}"
@@ -46,7 +46,7 @@
                                             @lang(' second delay. Avoid closing or refreshing the browser.')
                                         </p>
                                         <p class="text--primary">
-                                            @lang(' ' . @$sessionData['total_sent'] . ' out of ' . @$sessionData['total_entities'] . ' ' . $viaName . ' were successfully transmitted')
+                                            @lang(' ' . @$sessionData['total_sent'] . ' out of ' . @$sessionData['total_publisher'] . ' ' . $viaName . ' were successfully transmitted')
                                         </p>
                                     </div>
                                 </div>
@@ -195,11 +195,11 @@
                 getPublisherCount(methodName);
                 methodName = methodName.toUpperCase();
 
-                if (methodName == 'SELECTED') {
+                if (methodName == 'SELECTEDPUBLISHERS') {
                     $('.input-append').html(`
                     <div class="form-group" id="user_list_wrapper">
                         <label class="required">@lang('Select Publisher')</label>
-                        <select name="entities[]"  class="form-control" id="user_list" required multiple >
+                        <select name="publisher[]"  class="form-control" id="user_list" required multiple >
                             <option disabled>@lang('Select One')</option>
                         </select>
                     </div>
@@ -272,7 +272,7 @@
 
             function getPublisherCount(methodName) {
                 var methodNameUpper = methodName.toUpperCase();
-                if (methodNameUpper == 'SELECTED' || methodNameUpper == 'ALLPUBLISHERS' || methodNameUpper == 'TOPDEPOSITEDPUBLISHERS' ||
+                if (methodNameUpper == 'SELECTEDPUBLISHERS' || methodNameUpper == 'ALLPUBLISHERS' || methodNameUpper == 'TOPDEPOSITEDPUBLISHERS' ||
                     methodNameUpper == 'NOTLOGINPUBLISHERS') {
                     $('.userCount').text(0);
                     $('.userCountText').addClass('d-none');

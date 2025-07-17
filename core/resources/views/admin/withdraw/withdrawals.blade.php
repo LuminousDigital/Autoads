@@ -15,7 +15,7 @@
                     <table class="table table--light style--two">
                         <thead>
                             <tr>
-                                <th>@lang('Method | Transaction')</th>
+                                <th>@lang('Gateway | Transaction')</th>
                                 <th>@lang('Initiated')</th>
                                 <th>@lang('Publisher')</th>
                                 <th>@lang('Amount')</th>

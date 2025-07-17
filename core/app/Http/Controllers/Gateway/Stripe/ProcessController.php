@@ -25,49 +25,37 @@ class ProcessController extends Controller
         $alias = $deposit->gateway->alias;
 
         $send['track'] = $deposit->trx;
-        $send['view'] = 'advertiser.payment.' . $alias;
+        $send['view'] = 'advertiser.payment.'.$alias;
         $send['method'] = 'post';
-        $send['url'] = route('ipn.' . $alias);
+        $send['url'] = route('ipn.'.$alias);
         return json_encode($send);
     }
 
     public function ipn(Request $request)
     {
-        $track = $request->trx ?? null;
-
-        if (!$track) {
-            $track = Session::get('Track');
-        }
-
+        $track = Session::get('Track');
         $deposit = Deposit::where('trx', $track)->orderBy('id', 'DESC')->first();
-
-        $apiRequest = $deposit->is_web;
-
         if ($deposit->status == Status::PAYMENT_SUCCESS) {
             $notify[] = ['error', 'Invalid request.'];
-            if ($apiRequest) return responseError('invalid_request', $notify);
             return redirect($deposit->failed_url)->withNotify($notify);
         }
         $request->validate([
             'cardNumber' => 'required',
             'cardExpiry' => 'required',
-            'cardCVC'    => 'required',
+            'cardCVC' => 'required',
         ]);
 
-        $cc  = $request->cardNumber;
+        $cc = $request->cardNumber;
         $exp = $request->cardExpiry;
         $cvc = $request->cardCVC;
 
-        $exp = explode("/", $request->cardExpiry);
-
+        $exp = explode("/", $_POST['cardExpiry']);
         if (!@$exp[1]) {
             $notify[] = ['error', 'Invalid expiry date provided'];
-            if ($apiRequest) return responseError('invalid_expiry', $notify);
             return back()->withNotify($notify);
         }
-
-        $emo   = trim($exp[0]);
-        $eyr   = trim($exp[1]);
+        $emo = trim($exp[0]);
+        $eyr = trim($exp[1]);
         $cents = round($deposit->final_amount, 2) * 100;
 
         $stripeAcc = json_decode($deposit->gatewayCurrency()->gateway_parameter);
@@ -79,7 +67,7 @@ class ProcessController extends Controller
 
         try {
             $token = Token::create(array(
-                "card" => array(
+                    "card" => array(
                     "number" => "$cc",
                     "exp_month" => $emo,
                     "exp_year" => $eyr,
@@ -100,7 +88,7 @@ class ProcessController extends Controller
                     return redirect($deposit->success_url)->withNotify($notify);
                 }
             } catch (\Exception $e) {
-
+             
                 $notify[] = ['error', $e->getMessage()];
             }
         } catch (\Exception $e) {
@@ -108,7 +96,6 @@ class ProcessController extends Controller
             $notify[] = ['error', $e->getMessage()];
         }
 
-        if ($apiRequest) return responseError('payment_failed', $notify);
         return back()->withNotify($notify);
     }
 }

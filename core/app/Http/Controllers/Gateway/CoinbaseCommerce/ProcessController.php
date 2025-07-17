@@ -26,8 +26,8 @@ class ProcessController extends Controller
                 'trx' => $deposit->trx
             ],
             'pricing_type' => "fixed_price",
-            'redirect_url' => $deposit->success_url,
-            'cancel_url' => $deposit->failed_url
+            'redirect_url' => route('home').$deposit->success_url,
+            'cancel_url' => route('home').$deposit->failed_url
         ];
 
         $jsonData = json_encode($array);

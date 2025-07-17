@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
-use App\Lib\NotificationSender;
 use App\Models\NotificationLog;
+use App\Models\NotificationTemplate;
 use App\Models\Transaction;
 use App\Models\Publisher;
 use App\Models\PublisherAd;
@@ -66,6 +66,7 @@ class ManagePublishersController extends Controller
         $publishers = $this->userData('kycPending');
         return view('admin.publishers.list', compact('pageTitle', 'publishers'));
     }
+
 
 
     protected function userData($scope = null)
@@ -138,6 +139,8 @@ class ManagePublishersController extends Controller
         return back()->withNotify($notify);
     }
 
+ 
+
     public function kycDetails($id)
     {
         $pageTitle = 'KYC Details';
@@ -177,6 +180,8 @@ class ManagePublishersController extends Controller
 
     public function login($id)
     {
+    
+
         $publisher = Publisher::findOrFail($id);
 
         if(auth()->guard('advertiser')->check())
@@ -207,15 +212,15 @@ class ManagePublishersController extends Controller
         return back()->withNotify($notify);
     }
 
+
+    
     public function showNotificationSingleForm($id)
     {
         $publisher = Publisher::findOrFail($id);
-
         if (!gs('en') && !gs('sn') && !gs('pn')) {
             $notify[] = ['warning','Notification options are disabled currently'];
             return to_route('admin.publisher.detail',$publisher->id)->withNotify($notify);
         }
-
         $pageTitle = 'Send Notification to ' . $publisher->username;
         return view('admin.publishers.notification_single', compact('pageTitle', 'publisher'));
     }
@@ -234,7 +239,24 @@ class ManagePublishersController extends Controller
             return to_route('admin.dashboard')->withNotify($notify);
         }
 
-        return NotificationSender::for('publisher')->notificationToSingle($request, $id);
+        $imageUrl = null;
+        if($request->via == 'push' && $request->hasFile('image')){
+            $imageUrl = fileUploader($request->image, getFilePath('push'));
+        }
+
+        $template = NotificationTemplate::where('act', 'DEFAULT')->where($request->via.'_status', Status::ENABLE)->exists();
+        if(!$template){
+            $notify[] = ['warning', 'Default notification template is not enabled'];
+            return back()->withNotify($notify);
+        }
+
+        $publisher = Publisher::findOrFail($id);
+        notify($publisher,'DEFAULT',[
+            'subject'=>$request->subject,
+            'message'=>$request->message,
+        ],[$request->via],pushImage:$imageUrl);
+        $notify[] = ['success', 'Notification sent successfully'];
+        return back()->withNotify($notify);
     }
 
     public function showNotificationAllForm()
@@ -246,10 +268,10 @@ class ManagePublishersController extends Controller
 
         $notifyToPublisher = Publisher::notifyToPublisher();
         $publishers        = Publisher::active()->count();
-
+   
         $pageTitle    = 'Notification to Verified Publishers';
 
-        if (session()->has('SEND_NOTIFICATION') && !request()->continue) {
+        if (session()->has('SEND_NOTIFICATION') && !request()->email_sent) {
             session()->forget('SEND_NOTIFICATION');
         }
 
@@ -279,7 +301,88 @@ class ManagePublishersController extends Controller
             return to_route('admin.dashboard')->withNotify($notify);
         }
 
-        return NotificationSender::for('publisher')->notificationToAll($request);
+
+        $template = NotificationTemplate::where('act', 'DEFAULT')->where($request->via.'_status', Status::ENABLE)->exists();
+        if(!$template){
+            $notify[] = ['warning', 'Default notification template is not enabled'];
+            return back()->withNotify($notify);
+        }
+
+        if ($request->being_sent_to == 'selectedPublishers') {
+            if (session()->has("SEND_NOTIFICATION")) {
+                $request->merge(['publisher' => session()->get('SEND_NOTIFICATION')['publisher']]);
+            } else {
+                if (!$request->publisher || !is_array($request->publisher) || empty($request->publisher)) {
+                    $notify[] = ['error', "Ensure that the publisher field is populated when sending an email to the designated publisher group"];
+                    return back()->withNotify($notify);
+                }
+            }
+        }
+
+        $scope          = $request->being_sent_to;
+        $publisherQuery      = Publisher::oldest()->active()->$scope();
+
+        if (session()->has("SEND_NOTIFICATION")) {
+            $totalPublisherCount = session('SEND_NOTIFICATION')['total_publisher'];
+        } else {
+            $totalPublisherCount = (clone $publisherQuery)->count() - ($request->start-1);
+        }
+
+
+        if ($totalPublisherCount <= 0) {
+            $notify[] = ['error', "Notification recipients were not found among the selected publisher base."];
+            return back()->withNotify($notify);
+        }
+
+
+        $imageUrl = null;
+
+        if ($request->via == 'push' && $request->hasFile('image')) {
+            if (session()->has("SEND_NOTIFICATION")) {
+                $request->merge(['image' => session()->get('SEND_NOTIFICATION')['image']]);
+            }
+            if ($request->hasFile("image")) {
+                $imageUrl = fileUploader($request->image, getFilePath('push'));
+            }
+        }
+
+        $publishers = (clone $publisherQuery)->skip($request->start - 1)->limit($request->batch)->get();
+
+        foreach ($publishers as $user) {
+            notify($user, 'DEFAULT', [
+                'subject' => $request->subject,
+                'message' => $request->message,
+            ], [$request->via], pushImage: $imageUrl);
+        }
+
+        return $this->sessionForNotification($totalPublisherCount, $request);
+    }
+
+
+    private function sessionForNotification($totalPublisherCount, $request)
+    {
+        if (session()->has('SEND_NOTIFICATION')) {
+            $sessionData                = session("SEND_NOTIFICATION");
+            $sessionData['total_sent'] += $sessionData['batch'];
+        } else {
+            $sessionData               = $request->except('_token');
+            $sessionData['total_sent'] = $request->batch;
+            $sessionData['total_publisher'] = $totalPublisherCount;
+        }
+
+        $sessionData['start'] = $sessionData['total_sent'] + 1;
+
+        if ($sessionData['total_sent'] >= $totalPublisherCount) {
+            session()->forget("SEND_NOTIFICATION");
+            $message = ucfirst($request->via) . " notifications were sent successfully";
+            $url     = route("admin.publisher.notification.all");
+        } else {
+            session()->put('SEND_NOTIFICATION', $sessionData);
+            $message = $sessionData['total_sent'] . " " . $sessionData['via'] . "  notifications were sent successfully";
+            $url     = route("admin.publisher.notification.all") ."?email_sent=yes";
+        }
+        $notify[] = ['success', $message];
+        return redirect($url)->withNotify($notify);
     }
 
     public function countBySegment($methodName){
@@ -296,13 +399,14 @@ class ManagePublishersController extends Controller
             });
         }
         $publishers = $query->orderBy('id', 'desc')->paginate(getPaginate());
-
+       
         return response()->json([
             'success' => true,
             'publishers'   => $publishers,
             'more'    => $publishers->hasMorePages()
         ]);
     }
+
 
     public function notificationLog($id)
     {

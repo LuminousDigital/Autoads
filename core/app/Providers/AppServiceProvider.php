@@ -46,6 +46,10 @@ class AppServiceProvider extends ServiceProvider
             }
         }
 
+
+        $activeTemplate = activeTemplate();
+        $viewShare['activeTemplate'] = $activeTemplate;
+        $viewShare['activeTemplateTrue'] = activeTemplate(true);
         $viewShare['emptyMessage'] = 'Data not found';
         view()->share($viewShare);
 
@@ -70,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
                 'pendingWithdrawCount'    => Withdrawal::pending()->count(),
                 'updateAvailable'    => version_compare(gs('available_version'), systemDetails()['version'], '>') ? 'v' . gs('available_version') : false,
             ]);
-
+         
         });
         view()->composer('admin.partials.topnav', function ($view) {
             $view->with([

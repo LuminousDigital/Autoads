@@ -152,7 +152,7 @@ class NotifyProcess{
     *
     * Also custom message will be return from here if notification template doesn't exist.
     *
-    * @return string|bool
+    * @return string
     */
 	protected function getMessage(){
         $this->prevConfiguration();
@@ -164,9 +164,6 @@ class NotifyProcess{
         //finding the notification template
 		$template = NotificationTemplate::where('act', $this->templateName)->where($this->statusField, Status::ENABLE)->first();
 		$this->template = $template;
-
-        //Check email enable
-        if (!$this->template && $this->templateName) return false;
 
         //Getting the notification message from database if use and template exist
         //If not exist, get the message which have sent via method
@@ -183,6 +180,9 @@ class NotifyProcess{
 	    if ($this->shortCodes) {
             $message = $this->replaceTemplateShortCode($message);
 	    }
+
+        //Check email enable
+        if (!$this->template && $this->templateName) return false;
 
         //set subject to property
         $this->getSubject();

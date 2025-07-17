@@ -8,8 +8,8 @@ trait AdvertiserNotify
     public static function notifyToAdvertiser(){
         return [
             'allAdvertisers'              => 'All Advertisers',
-            'selected'                    => 'Selected Advertisers',
-            'withBalance'                 => 'With Balance Advertisers',
+            'selectedAdvertisers'         => 'Selected Advertisers',
+            'withBalance'           => 'With Balance Advertisers',
             'emptyBalanceAdvertisers'     => 'Empty Balance Advertisers',
             'twoFaDisableAdvertisers'     => '2FA Disable User',
             'twoFaEnableAdvertisers'      => '2FA Enable User',
@@ -28,9 +28,9 @@ trait AdvertiserNotify
         ];
     }
 
-    public function scopeSelected($query)
+    public function scopeSelectedAdvertisers($query)
     {
-        return $query->whereIn('id', request()->entities ?? []);
+        return $query->whereIn('id', request()->user ?? []);
     }
 
     public function scopeAllAdvertisers($query)
@@ -140,6 +140,6 @@ trait AdvertiserNotify
         });
     }
 
-
+ 
 
 }

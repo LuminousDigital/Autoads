@@ -11,7 +11,7 @@
 
                     <div class="card-body">
                         <h6 class="mb-3">
-                            @lang('Use the QR code or setup key on your Google Authenticator app to add your account.')
+                            @lang('Use the QR code or setup key on your Google Authenticator app to add your account. ')
                         </h6>
 
                         <div class="form-group mx-auto text-center">

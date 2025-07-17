@@ -1,5 +1,4 @@
-<script src="{{asset('assets/global/js/firebase/firebase-app.js')}}"></script>
-<script src="{{asset('assets/global/js/firebase/firebase-messaging.js')}}"></script>
+<script src="{{ asset('assets/global/js/firebase/firebase-8.3.2.js') }}"></script>
 
 <script>
     "use strict";

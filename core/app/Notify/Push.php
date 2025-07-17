@@ -54,13 +54,9 @@ class Push extends NotifyProcess implements Notifiable{
     * @return void|bool
     */
 	public function send(){
-        if (!gs('pn')) {
-			return false;
-		}
-
         //get message from parent
         $message = $this->getMessage();
-        if ($message) {
+        if (gs('pn') && $message) {
             try {
                 $credentialsFilePath = getFilePath('pushConfig').'/push_config.json';
                 $client = new \Google_Client();
@@ -77,7 +73,7 @@ class Push extends NotifyProcess implements Notifiable{
                 $data['notification'] = [
                     'body'=>$message,
                     'title'=>$this->getTitle(),
-                    'image'=> $this->pushImage ? asset(getFilePath('push')).'/'.$this->pushImage : null,
+                    'image'=>asset(getFilePath('push')).'/'.$this->pushImage,
                 ];
 
                 $data['data'] = [
@@ -99,7 +95,6 @@ class Push extends NotifyProcess implements Notifiable{
                     curl_exec($ch);
                     curl_close($ch);
                 }
-                $this->createLog('push');
             } catch(\Exception $e){
                 $this->createErrorLog($e->getMessage());
                 session()->flash('firebase_error',$e->getMessage());
@@ -115,7 +110,7 @@ class Push extends NotifyProcess implements Notifiable{
     */
 	public function prevConfiguration(){
         if ($this->user) {
-
+           
             $this->deviceId = $this->user->deviceTokens()->pluck('token')->toArray();
 			$this->receiverName = $this->user->fullname;
 		}

@@ -14,8 +14,8 @@ class ProcessController extends Controller {
             'price_amount'     => $deposit->final_amount,
             'price_currency'   => $deposit->method_currency,
             'ipn_callback_url' => route('ipn.NowPaymentsCheckout'),
-            'success_url'=> $deposit->success_url,
-            'cancel_url'=> $deposit->failed_url,
+            'success_url'=>route('home').$deposit->success_url,
+            'cancel_url'=>route('home').$deposit->failed_url,
             'order_id'         => $deposit->trx,
 
         ]), [

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Lib\RequiredConfig;
 use App\Models\Country;
 use Illuminate\Http\Request;
 
@@ -37,9 +36,8 @@ class ManageCountryController extends Controller
 
         $country->country_name = $singleCountry->country;
         $country->country_code = $countryCode;
-        $country->save();
 
-        RequiredConfig::configured('add_country');
+        $country->save();
         return back()->withNotify($notify);
     }
 

@@ -1,8 +1,10 @@
 @extends('admin.layouts.app')
 
 @section('panel')
-    <div class="row gy-4">
-        <div class="col-lg-4 col-md-4">
+    <div class="row mb-none-30">
+
+
+        <div class="col-lg-4 col-md-4 mb-30">
             <div class="card overflow-hidden box--shadow1">
                 <div class="card-body">
                     <h5 class="mb-20 text-muted">@lang('Withdraw Via') {{__(@$withdrawal->method->name)}}</h5>
@@ -57,19 +59,22 @@
                         </li>
 
                         @if($withdrawal->admin_feedback)
-                        <li class="list-group-item">
-                            <span class="text-black">@lang('Admin Response')</span>
-                            <p class="mt-1">{{__($withdrawal->admin_feedback)}}</p>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @lang('Admin Response')
+                           <p>{{$withdrawal->admin_feedback}}</p>
                         </li>
                         @endif
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="col-lg-8 col-md-8">
+        <div class="col-lg-8 col-md-8 mb-30">
+
             <div class="card overflow-hidden box--shadow1">
                 <div class="card-body">
                     <h5 class="card-title border-bottom pb-2">@lang('Publisher Withdraw Information')</h5>
+
+
                     @if($details != null)
                         @foreach(json_decode($details) as $val)
                             <div class="row mt-4">
@@ -90,6 +95,8 @@
                             </div>
                         @endforeach
                     @endif
+
+
                     @if($withdrawal->status == Status::PAYMENT_PENDING)
                         <div class="row mt-4">
                             <div class="col-md-12">
@@ -103,10 +110,13 @@
                             </div>
                         </div>
                     @endif
+
                 </div>
             </div>
         </div>
     </div>
+
+
 
     {{-- APPROVE MODAL --}}
     <div id="approveModal" class="modal fade" tabindex="-1" role="dialog">

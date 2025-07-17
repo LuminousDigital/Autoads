@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Lib\RequiredConfig;
 use App\Models\Gateway;
 use App\Models\GatewayCurrency;
 use App\Rules\FileTypeValidate;
@@ -97,15 +96,13 @@ class AutomaticGatewayController extends Controller
             }
         }
 
-        RequiredConfig::configured('deposit_method');
-
         $notify[] = ['success', $gateway->name . ' updated successfully'];
         return to_route('admin.gateway.automatic.edit', $gateway->alias)->withNotify($notify);
     }
 
     public function remove($id)
     {
-        $gatewayCurrency = GatewayCurrency::findOrFail($id);
+        $gatewayCurrency = GatewayCurrency::find($id);
         fileManager()->removeFile(getFilePath('gateway').'/'.$gatewayCurrency->image);
         $gatewayCurrency->delete();
         $notify[] = ['success', 'Gateway currency removed successfully'];

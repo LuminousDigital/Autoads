@@ -36,7 +36,7 @@ class ProcessController extends Controller
             'purpose' => 'Payment to ' . gs('site_name'),
             'amount' => round($deposit->final_amount,2),
             'buyer_name' => $deposit->user->username,
-            'redirect_url' => $deposit->success_url,
+            'redirect_url' => route('home').$deposit->success_url,
             'webhook' => route('ipn.'.$deposit->gateway->alias),
             'email' => $deposit->user->email,
             'send_email' => true,

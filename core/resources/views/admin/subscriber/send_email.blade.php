@@ -9,16 +9,20 @@
                 <div class="col-sm-7">
                     <div class="row gy-4 justify-content-center">
                         <div class="col-sm-6">
-                            <x-widget link="javascript:void(0)" style="6" icon="fas fa-list" title="Email should be sent" value="{{ @$sessionData['total_subscriber'] }}" bg="primary" :viewMoreIcon=false />
+                            <x-widget link="javascript:void(0)" style="6" icon="fas fa-list" title="Email should be sent"
+                                value="{{ @$sessionData['total_subscriber'] }}" bg="primary" :viewMoreIcon=false />
                         </div>
                         <div class="col-sm-6">
-                            <x-widget link="javascript:void(0)" style="6" icon="fa-solid fa-envelope-circle-check" title="Email has been sent" value="{{ @$sessionData['total_sent'] }}" bg="success" :viewMoreIcon=false />
+                            <x-widget link="javascript:void(0)" style="6" icon="fa-solid fa-envelope-circle-check" title="Email has been sent"
+                                value="{{ @$sessionData['total_sent'] }}" bg="success" :viewMoreIcon=false />
                         </div>
                         <div class="col-sm-6">
-                            <x-widget link="javascript:void(0)" style="6" icon="fa-solid fa-paper-plane" title="Email has yet to be sent" :viewMoreIcon=false value="{{ @$sessionData['total_subscriber'] - @$sessionData['total_sent'] }}" bg="warning" />
+                            <x-widget link="javascript:void(0)" style="6" icon="fa-solid fa-paper-plane" title="Email has yet to be sent"
+                                :viewMoreIcon=false value="{{ @$sessionData['total_subscriber'] - @$sessionData['total_sent'] }}" bg="warning" />
                         </div>
                         <div class="col-sm-6">
-                            <x-widget link="javascript:void(0)" style="6" icon="fas fa-envelope" title="Email per batch" value="{{ @$sessionData['batch'] }}" bg="primary" :viewMoreIcon=false />
+                            <x-widget link="javascript:void(0)" style="6" icon="fas fa-envelope" title="Email per batch"
+                                value="{{ @$sessionData['batch'] }}" bg="primary" :viewMoreIcon=false />
                         </div>
                         <div class="col-12">
                             <div class="card">
@@ -39,7 +43,7 @@
                                             @lang(' second delay. Avoid closing or refreshing the browser.')
                                         </p>
                                         <p class="text--primary">
-                                            @lang(' ' . @$sessionData['total_sent'] . ' out of ' . @$sessionData['total_subscriber'] . ' email were successfully transmitted')
+                                            @lang(' ' . @$sessionData['total_sent'] . ' out of ' . @$sessionData['total_subscriber'] . 'email were successfully transmitted')
                                         </p>
                                     </div>
                                 </div>
@@ -60,7 +64,8 @@
                         <div class="row">
                             <div class="form-group col-md-12 subject-wrapper">
                                 <label>@lang('Subject') <span class="text-danger">*</span> </label>
-                                <input type="text" class="form-control" placeholder="@lang('Subject / Title')" name="subject" value="{{ old('subject', @$sessionData['subject']) }}">
+                                <input type="text" class="form-control" placeholder="@lang('Subject / Title')" name="subject"
+                                    value="{{ old('subject', @$sessionData['subject']) }}">
                             </div>
 
                             <div class="col-md-12">
@@ -74,14 +79,16 @@
                                     <div class="col-md-4 start-from-col">
                                         <div class="form-group">
                                             <label>@lang('Start Form') </label>
-                                            <input class="form-control" name="start" value="{{ old('start', @$sessionData['start']) }}" type="number" placeholder="@lang('Start form user id. e.g. 1')" required>
+                                            <input class="form-control" name="start" value="{{ old('start', @$sessionData['start']) }}" type="number"
+                                                placeholder="@lang('Start form user id. e.g. 1')" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4 per-batch-col">
                                         <div class="form-group">
                                             <label>@lang('Per Batch') </label>
                                             <div class="input-group">
-                                                <input class="form-control" name="batch" value="{{ old('batch', @$sessionData['batch']) }}" type="number" placeholder="@lang('How many subscriber')" required>
+                                                <input class="form-control" name="batch" value="{{ old('batch', @$sessionData['batch']) }}"
+                                                    type="number" placeholder="@lang('How many subscriber')" required>
                                                 <span class="input-group-text">
                                                     @lang('User')
                                                 </span>
@@ -92,7 +99,8 @@
                                         <div class="form-group">
                                             <label>@lang('Cooling Period') </label>
                                             <div class="input-group">
-                                                <input class="form-control" name="cooling_time" value="{{ old('cooling_time', @$sessionData['batch']) }}" type="number" placeholder="@lang('Waiting time')" required>
+                                                <input class="form-control" name="cooling_time" value="{{ old('cooling_time', @$sessionData['batch']) }}"
+                                                    type="number" placeholder="@lang('Waiting time')" required>
                                                 <span class="input-group-text">
                                                     @lang('Seconds')
                                                 </span>
@@ -103,14 +111,17 @@
                             </div>
                         </div>
                     </div>
+                    @can('admin.subscriber.send.email')
                     <div class="card-footer">
                         <button class="btn w-100 h-45 btn--primary me-2" type="submit">@lang('Submit')</button>
                     </div>
+                    @endcan
                 </form>
             </div>
         </div>
     </div>
 @endsection
+
 
 @push('script')
     <script>

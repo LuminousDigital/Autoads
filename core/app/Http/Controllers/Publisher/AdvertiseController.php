@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AdType;
 use App\Models\Advertise;
 use App\Models\PublisherAd;
-use App\Constants\Status;
 
 
 class AdvertiseController extends Controller
@@ -14,11 +13,7 @@ class AdvertiseController extends Controller
     public function advertise()
     {
         $pageTitle = 'Advertise Types';
-
-        $ads = AdType::whereHas('advertises', function($query){
-            $query->where('status', Status::ACTIVE_ADVERTISE);
-        })->enable()->paginate(getPaginate());
-
+        $ads       = AdType::enable()->paginate(getPaginate());
         return view('Template::publisher.advertise.index', compact('ads', 'pageTitle'));
     }
 

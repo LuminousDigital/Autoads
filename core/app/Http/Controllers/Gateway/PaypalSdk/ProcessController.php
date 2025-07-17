@@ -40,7 +40,7 @@ class ProcessController extends Controller
                                  ]
                              ]],
                              "application_context" => [
-                                  "cancel_url" => $deposit->failed_url,
+                                  "cancel_url" => route('home').$deposit->failed_url,
                                   "return_url" => route('ipn.'.$deposit->gateway->alias)
                              ]
                          ];

@@ -98,7 +98,11 @@ Route::middleware('admin')->group(function () {
         });
     });
 
-    // Advertiser Manager
+
+
+
+
+    // Advertiser Manager 
     Route::controller('ManageAdvertisersController')->name('advertiser.')->prefix('advertiser')->group(function () {
 
         Route::get('all', 'allAdvertiser')->name('all');
@@ -128,7 +132,7 @@ Route::middleware('admin')->group(function () {
     });
 
 
-    // Publisher Manager
+    // Publisher Manager 
     Route::controller('ManagePublishersController')->name('publisher.')->prefix('publisher')->group(function () {
         Route::get('all', 'allPublisher')->name('all');
         Route::get('active/all', 'activePublishers')->name('active');

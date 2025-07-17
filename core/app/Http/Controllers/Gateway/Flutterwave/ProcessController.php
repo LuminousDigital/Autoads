@@ -77,7 +77,7 @@ class ProcessController extends Controller
             $notify[] = ['error', $message];
             $notifyApi[] = $message;
 
-            if ($deposit->is_web) {
+            if ($deposit->from_api) {
                 return response()->json([
                     'code'=>200,
                     'status'=>'ok',
@@ -102,7 +102,7 @@ class ProcessController extends Controller
         $notify[] = ['error', $message];
         $notifyApi[] = $message;
 
-        if ($deposit->is_web) {
+        if ($deposit->from_api) {
             return response()->json([
                 'code'=>200,
                 'status'=>'ok',

@@ -6,6 +6,7 @@ use App\Constants\Status;
 use App\Models\Deposit;
 use App\Http\Controllers\Controller;
 use CoinGate\Client;
+use CoinGate\Merchant\Order;
 use App\Http\Controllers\Gateway\PaymentController;
 use App\Lib\CurlRequest;
 
@@ -29,8 +30,8 @@ class ProcessController extends Controller
             'price_currency' => $deposit->method_currency,
             'receive_currency' => $deposit->method_currency,
             'callback_url' => route('ipn.'.$deposit->gateway->alias),
-            'cancel_url' =>$deposit->failed_url,
-            'success_url' =>$deposit->success_url,
+            'cancel_url' => route('home').$deposit->failed_url,
+            'success_url' => route('home').$deposit->success_url,
             'title' => 'Payment to ' . gs('site_name'),
             'token' => $deposit->trx
         );

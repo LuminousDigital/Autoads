@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Constants\Status;
-use App\Lib\RequiredConfig;
 use App\Models\AdType;
 use App\Models\Country;
 use App\Models\Advertise;
@@ -18,7 +17,7 @@ class AdvertiseController extends Controller
     {
         $advertises = Advertise::searchable(['ad_name', 'ad_title', 'advertiser:username', 'clicked', 'impression', 'countries:country_name'])->with('advertiser')->filter(['advertiser_id'])->orderBy('impression', 'DESC')->orderBy('clicked', 'DESC')->paginate(getPaginate());
         $pageTitle  = 'All Advertise';
-
+        
         return view('admin.advertise.index', compact('advertises', 'pageTitle'));
     }
 
@@ -154,7 +153,6 @@ class AdvertiseController extends Controller
         $cost->country_id = $country->id;
         $cost->save();
 
-        RequiredConfig::configured('add_cost');
         return back()->withNotify($notify);
     }
 }

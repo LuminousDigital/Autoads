@@ -51,7 +51,7 @@
                                 <div class="row">
 
                                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                                        <div class="card border border--primary mt-3">
+                                        <div class="card border--primary mt-3">
                                             <h5 class="card-header bg--primary">@lang('Range')</h5>
                                             <div class="card-body">
                                                 <div class="form-group">
@@ -74,7 +74,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                                        <div class="card border border--primary mt-3">
+                                        <div class="card border--primary mt-3">
                                             <h5 class="card-header bg--primary">@lang('Charge')</h5>
                                             <div class="card-body">
                                                 <div class="form-group">
@@ -96,7 +96,7 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <div class="card border border--primary mt-3">
+                                        <div class="card border--primary mt-3">
                                             <h5 class="card-header bg--primary">@lang('Deposit Instruction')</h5>
                                             <div class="card-body">
                                                 <div class="form-group">
@@ -108,7 +108,7 @@
 
                                     <div class="col-lg-12">
                                         <div class="submitRequired bg--warning form-change-alert d-none mt-3"><i class="fas fa-exclamation-triangle"></i> @lang('You\'ve to click on the submit button to apply the changes')</div>
-                                        <div class="card border border--primary mt-3">
+                                        <div class="card border--primary mt-3">
                                             <div class="card-header bg--primary d-flex justify-content-between">
                                                 <h5 class="text-white">@lang('User Data')</h5>
                                                 <button type="button" class="btn btn-sm btn-outline-light float-end form-generate-btn"> <i class="la la-fw la-plus"></i>@lang('Add New')</button>

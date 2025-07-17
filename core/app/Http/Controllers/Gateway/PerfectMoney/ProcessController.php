@@ -26,9 +26,9 @@ class ProcessController extends Controller
         $val['PAYMENT_UNITS'] = "$deposit->method_currency";
 
         $val['STATUS_URL'] = route('ipn.'.$deposit->gateway->alias);
-        $val['PAYMENT_URL'] = $deposit->success_url;
+        $val['PAYMENT_URL'] = route('home').$deposit->success_url;
         $val['PAYMENT_URL_METHOD'] = 'POST';
-        $val['NOPAYMENT_URL'] = $deposit->failed_url;
+        $val['NOPAYMENT_URL'] = route('home').$deposit->failed_url;
         $val['NOPAYMENT_URL_METHOD'] = 'POST';
         $val['SUGGESTED_MEMO'] =  auth()->guard('advertiser')->user()->username;
         $val['BAGGAGE_FIELDS'] = 'IDENT';

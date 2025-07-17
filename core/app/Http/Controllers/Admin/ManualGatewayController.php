@@ -7,7 +7,6 @@ use App\Models\Gateway;
 use App\Models\GatewayCurrency;
 use App\Http\Controllers\Controller;
 use App\Lib\FormProcessor;
-use App\Lib\RequiredConfig;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
 
@@ -29,7 +28,7 @@ class ManualGatewayController extends Controller
 
     public function store(Request $request)
     {
-
+    
         $formProcessor = new FormProcessor();
         $this->validation($request,$formProcessor);
 
@@ -77,8 +76,6 @@ class ManualGatewayController extends Controller
         $gatewayCurrency->rate = $request->rate;
         $gatewayCurrency->save();
 
-        RequiredConfig::configured('deposit_method');
-
         $notify[] = ['success', $method->name . ' Manual gateway has been added.'];
         return back()->withNotify($notify);
     }
@@ -93,7 +90,7 @@ class ManualGatewayController extends Controller
 
     public function update(Request $request, $code)
     {
-
+        
         $formProcessor = new FormProcessor();
         $this->validation($request,$formProcessor,true);
 

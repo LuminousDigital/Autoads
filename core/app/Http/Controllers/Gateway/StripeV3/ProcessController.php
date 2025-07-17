@@ -34,8 +34,8 @@ class ProcessController extends Controller
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
-                'cancel_url' => $deposit->failed_url,
-                'success_url' => $deposit->success_url,
+                'cancel_url' => route('home').$deposit->failed_url,
+                'success_url' => route('home').$deposit->success_url,
             ]);
         } catch (\Exception $e) {
             $send['error'] = true;
@@ -48,7 +48,7 @@ class ProcessController extends Controller
         $send['StripeJSAcc'] = $StripeAcc;
         $deposit->btc_wallet = json_decode(json_encode($session))->id;
         $deposit->save();
-    return json_encode($send);
+        return json_encode($send);
     }
 
 

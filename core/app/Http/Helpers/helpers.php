@@ -10,7 +10,6 @@ use App\Lib\Captcha;
 use App\Lib\ClientInfo;
 use App\Lib\CurlRequest;
 use App\Lib\FileManager;
-use App\Models\Language;
 use App\Notify\Notify;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
@@ -19,8 +18,8 @@ use Laramin\Utility\VugiChugi;
 function systemDetails()
 {
     $system['name']          = 'adsrock';
-    $system['version']       = '3.1';
-    $system['build_version'] = '5.1.9';
+    $system['version']       = '3.0';
+    $system['build_version'] = '5.0.9';
     return $system;
 }
 
@@ -33,8 +32,8 @@ function verificationCode($length)
 {
     if ($length == 0) return 0;
     $min = pow(10, $length - 1);
-    $max = (int) ($min - 1) . '9';
-    return random_int($min, $max);
+    $max = (int) ($min - 1).'9';
+    return random_int($min,$max);
 }
 
 function getNumber($length = 8)
@@ -49,27 +48,23 @@ function getNumber($length = 8)
 }
 
 
-function activeTemplate($asset = false)
-{
+function activeTemplate($asset = false) {
     $template = session('template') ?? gs('active_template');
     if ($asset) return 'assets/templates/' . $template . '/';
     return 'templates.' . $template . '.';
 }
 
-function activeTemplateName()
-{
+function activeTemplateName() {
     $template = session('template') ?? gs('active_template');
     return $template;
 }
 
-function siteLogo($type = null)
-{
+function siteLogo($type = null) {
     $name = $type ? "/logo_$type.png" : '/logo.png';
     return getImage(getFilePath('logoIcon') . $name);
 }
-function siteFavicon()
-{
-    return getImage(getFilePath('logoIcon') . '/favicon.png');
+function siteFavicon() {
+    return getImage(getFilePath('logoIcon'). '/favicon.png');
 }
 
 function loadReCaptcha()
@@ -90,7 +85,7 @@ function verifyCaptcha()
 function loadExtension($key)
 {
     $extension = Extension::where('act', $key)->where('status', Status::ENABLE)->first();
-    return $extension ? $extension->generateScript() : '';
+    return $extension ? $extension->generateScript(): '';
 }
 
 function getTrx($length = 12)
@@ -127,11 +122,11 @@ function showAmount($amount, $decimal = 2, $separate = true, $exceptZeros = fals
     }
     if ($currencyFormat) {
         if (gs('currency_format') == Status::CUR_BOTH) {
-            return gs('cur_sym') . $printAmount . ' ' . __(gs('cur_text'));
-        } elseif (gs('currency_format') == Status::CUR_TEXT) {
-            return $printAmount . ' ' . __(gs('cur_text'));
-        } else {
-            return gs('cur_sym') . $printAmount;
+            return gs('cur_sym').$printAmount.' '.__(gs('cur_text'));
+        }elseif(gs('currency_format') == Status::CUR_TEXT){
+            return $printAmount.' '.__(gs('cur_text'));
+        }else{
+            return gs('cur_sym').$printAmount;
         }
     }
     return $printAmount;
@@ -189,7 +184,7 @@ function getTemplates()
     if ($response) {
         return $response;
     } else {
-        return null;
+        return false;
     }
 }
 
@@ -219,7 +214,7 @@ function getImage($image, $size = null)
 }
 
 
-function notify($user, $templateName, $shortCodes = null, $sendVia = null, $createLog = true, $pushImage = null)
+function notify($user, $templateName, $shortCodes = null, $sendVia = null, $createLog = true,$pushImage = null)
 {
 
     $globalShortCodes = [
@@ -252,15 +247,15 @@ function getPaginate($paginate = null)
     return $paginate;
 }
 
-function paginateLinks($data, $view = null)
+function paginateLinks($data)
 {
-    return $data->appends(request()->all())->links($view);
+    return $data->appends(request()->all())->links();
 }
 
 
 function menuActive($routeName, $type = null, $param = null)
 {
-    if ($type == 3) $class = 'side-menu--open';
+    if     ($type == 3) $class = 'side-menu--open';
     elseif ($type == 2) $class = 'sidebar-submenu__open';
     else   $class              = 'active';
 
@@ -279,7 +274,7 @@ function menuActive($routeName, $type = null, $param = null)
 }
 
 
-function fileUploader($file, $location, $size = null, $old = null, $thumb = null, $filename = null)
+function fileUploader($file, $location, $size = null, $old = null, $thumb = null,$filename = null)
 {
     $fileManager           = new FileManager($file);
     $fileManager->path     = $location;
@@ -314,12 +309,7 @@ function getFileExt($key)
 function diffForHumans($date)
 {
     $lang = session()->get('lang');
-
-    if(!$lang){
-        $lang = getDefaultLang();
-    }
-
-    Carbon::setlocale($lang);
+    Carbon::setlocale($lang ?? 'en');
     return Carbon::parse($date)->diffForHumans();
 }
 
@@ -330,21 +320,12 @@ function showDateTime($date, $format = 'Y-m-d h:i A')
         return '-';
     }
     $lang = session()->get('lang');
-
-    if(!$lang){
-        $lang = getDefaultLang();
-    }
-
     Carbon::setlocale($lang);
     return Carbon::parse($date)->translatedFormat($format);
 }
 
-function getDefaultLang(){
-    return Language::where('is_default', Status::YES)->first()->code ?? 'en';
-}
 
-function getContent($dataKeys, $singleQuery = false, $limit = null, $orderById = false)
-{
+function getContent($dataKeys, $singleQuery = false, $limit = null, $orderById = false) {
 
     $templateName = activeTemplateName();
     if ($singleQuery) {
@@ -410,7 +391,7 @@ function showEmailAddress($email)
 function getRealIP()
 {
     $ip = $_SERVER["REMOTE_ADDR"];
-    //Deep detect ip
+      //Deep detect ip
     if (filter_var(@$_SERVER['HTTP_FORWARDED'], FILTER_VALIDATE_IP)) {
         $ip = $_SERVER['HTTP_FORWARDED'];
     }
@@ -463,8 +444,7 @@ function gs($key = null)
     if ($key) return @$general->$key;
     return $general;
 }
-function isImage($string)
-{
+function isImage($string){
     $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');
     $fileExtension     = pathinfo($string, PATHINFO_EXTENSION);
     if (in_array($fileExtension, $allowedExtensions)) {
@@ -484,29 +464,28 @@ function isHtml($string)
 }
 
 
-function convertToReadableSize($size)
-{
+function convertToReadableSize($size) {
     preg_match('/^(\d+)([KMG])$/', $size, $matches);
     $size = (int)$matches[1];
     $unit = $matches[2];
 
     if ($unit == 'G') {
-        return $size . 'GB';
+        return $size.'GB';
     }
 
     if ($unit == 'M') {
-        return $size . 'MB';
+        return $size.'MB';
     }
 
     if ($unit == 'K') {
-        return $size . 'KB';
+        return $size.'KB';
     }
 
-    return $size . $unit;
+    return $size.$unit;
 }
 
 
-function frontendImage($sectionName, $image, $size = null, $seo = false)
+function frontendImage($sectionName, $image, $size = null,$seo = false)
 {
     if ($seo) {
         return getImage('assets/images/frontend/' . $sectionName . '/seo/' . $image, $size);
@@ -519,14 +498,14 @@ function frontendImage($sectionName, $image, $size = null, $seo = false)
 function separateNumberAndString($text)
 {
     try {
-        // Extracting numbers
+          // Extracting numbers
         preg_match('/(\d+)/', $text, $numbers);
         $numberArray = $numbers[0];
 
-        // Extracting non-numeric characters
+          // Extracting non-numeric characters
         $nonNumericArray = preg_split('/\d+/', $text);
 
-        // Removing empty values from non-numeric array
+          // Removing empty values from non-numeric array
         $nonNumericArray = array_filter($nonNumericArray);
         $nonNumericArray = implode('', $nonNumericArray);
 
@@ -543,30 +522,30 @@ function separateNumberAndString($text)
 }
 
 
-function shortNumberFormat($n, $precision = 1)
+function shortNumberFormat($n, $precision =1 )
 {
     if ($n < 900) {
-        // 0 - 900
+          // 0 - 900
         $nFormat = number_format($n, $precision);
         $suffix   = '';
     } else if ($n < 900000) {
-        // 0.9k-850k
+          // 0.9k-850k
         $nFormat = number_format($n / 1000, $precision);
         $suffix   = 'K';
     } else if ($n < 900000000) {
-        // 0.9m-850m
+          // 0.9m-850m
         $nFormat = number_format($n / 1000000, $precision);
         $suffix   = 'M';
     } else if ($n < 900000000000) {
-        // 0.9b-850b
+          // 0.9b-850b
         $nFormat = number_format($n / 1000000000, $precision);
         $suffix   = 'B';
     } else {
-        // 0.9t+
+          // 0.9t+
         $nFormat = number_format($n / 1000000000000, $precision);
         $suffix   = 'T';
     }
-    // Remove unecessary zeroes after decimal.
+      // Remove unecessary zeroes after decimal.
 
     if ($precision > 0) {
         $dotzero  = '.' . str_repeat('0', $precision);
@@ -575,44 +554,8 @@ function shortNumberFormat($n, $precision = 1)
     return $nFormat . $suffix;
 }
 
-function buildResponse($remark, $status, $notify, $data = null)
-{
-    $response = [
-        'remark' => $remark,
-        'status' => $status,
-    ];
-    $message = [];
-    if ($notify instanceof \Illuminate\Support\MessageBag) {
-        $message['error']  = collect($notify)->map(function ($item) {
-            return $item[0];
-        })->values()->toArray();
-    } else {
-        $message = [$status => collect($notify)->map(function ($item) {
-            if (is_string($item)) {
-                return $item;
-            }
-            if (count($item) > 1) {
-                return $item[1];
-            }
-            return $item[0];
-        })->toArray()];
-    }
-    $response['message'] = $message;
-    if ($data) {
-        $response['data'] = $data;
-    }
-    return response()->json($response);
-}
 
-function responseSuccess($remark, $notify, $data = null)
-{
-    return buildResponse($remark, 'success', $notify, $data);
-}
 
-function responseError($remark, $notify, $data = null)
-{
-    return buildResponse($remark, 'error', $notify, $data);
-}
 
 
 function urlToDomain($url)

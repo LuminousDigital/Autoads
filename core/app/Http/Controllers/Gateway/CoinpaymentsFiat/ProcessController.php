@@ -26,11 +26,11 @@ class ProcessController extends Controller
         $val['ipn_url'] =  route('ipn.'.$deposit->gateway->alias);
         $val['custom'] = "$deposit->trx";
         $val['amount'] = round($deposit->final_amount,2);
-        $val['return'] = $deposit->success_url;
-        $val['cancel_return'] = $deposit->failed_url;
+        $val['return'] = route('home').$deposit->success_url;
+        $val['cancel_return'] = route('home').$deposit->failed_url;
         $val['notify_url'] = route('ipn.'.$deposit->gateway->alias);
-        $val['success_url'] = $deposit->success_url;
-        $val['cancel_url'] = $deposit->failed_url;
+        $val['success_url'] = route('home').$deposit->success_url;
+        $val['cancel_url'] = route('home').$deposit->failed_url;
         $val['custom'] = $deposit->trx;
         $val['cmd'] = '_pay_simple';
         $val['want_shipping'] = 0;

@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
-use App\Lib\NotificationSender;
 use App\Models\Advertise;
 use App\Models\Deposit;
 use App\Models\NotificationLog;
 use App\Models\Transaction;
 use App\Models\Advertiser;
+use App\Models\NotificationTemplate;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -76,7 +76,7 @@ class ManageAdvertisersController extends Controller
         return view('admin.advertisers.detail', compact('pageTitle', 'advertiser', 'totalDeposit', 'totalTransaction', 'countries', 'totalAdvertise'));
     }
 
-
+ 
     public function update(Request $request, $id)
     {
         $publisher = Advertiser::findOrFail($id);
@@ -117,7 +117,7 @@ class ManageAdvertisersController extends Controller
 
         $publisher->ev = $request->ev ? Status::VERIFIED : Status::UNVERIFIED;
         $publisher->sv = $request->sv ? Status::VERIFIED : Status::UNVERIFIED;
-
+      
 
         $publisher->save();
         $notify[] = ['success', 'Advertiser details updated successfully'];
@@ -226,7 +226,7 @@ class ManageAdvertisersController extends Controller
 
     public function sendNotificationSingle(Request $request, $id)
     {
-
+       
         $request->validate([
             'message' => 'required',
             'via'     => 'required|in:email,sms,push',
@@ -239,7 +239,24 @@ class ManageAdvertisersController extends Controller
             return to_route('admin.dashboard')->withNotify($notify);
         }
 
-        return NotificationSender::for('advertiser')->notificationToSingle($request, $id);
+        $imageUrl = null;
+        if($request->via == 'push' && $request->hasFile('image')){
+            $imageUrl = fileUploader($request->image, getFilePath('push'));
+        }
+
+        $template = NotificationTemplate::where('act', 'DEFAULT')->where($request->via.'_status', Status::ENABLE)->exists();
+        if(!$template){
+            $notify[] = ['warning', 'Default notification template is not enabled'];
+            return back()->withNotify($notify);
+        }
+
+        $advertiser = Advertiser::findOrFail($id);
+        notify($advertiser,'DEFAULT',[
+            'subject'=>$request->subject,
+            'message'=>$request->message,
+        ],[$request->via],pushImage:$imageUrl);
+        $notify[] = ['success', 'Notification sent successfully'];
+        return back()->withNotify($notify);
     }
 
     public function showNotificationAllForm()
@@ -253,7 +270,7 @@ class ManageAdvertisersController extends Controller
         $advertisers        = Advertiser::active()->count();
         $pageTitle    = 'Notification to Verified Advertisers';
 
-        if (session()->has('SEND_NOTIFICATION') && !request()->continue) {
+        if (session()->has('SEND_NOTIFICATION') && !request()->email_sent) {
             session()->forget('SEND_NOTIFICATION');
         }
 
@@ -283,7 +300,88 @@ class ManageAdvertisersController extends Controller
             return to_route('admin.dashboard')->withNotify($notify);
         }
 
-        return NotificationSender::for('advertiser')->notificationToAll($request);
+
+        $template = NotificationTemplate::where('act', 'DEFAULT')->where($request->via.'_status', Status::ENABLE)->exists();
+        if(!$template){
+            $notify[] = ['warning', 'Default notification template is not enabled'];
+            return back()->withNotify($notify);
+        }
+
+        if ($request->being_sent_to == 'selectedAdvertisers') {
+            if (session()->has("SEND_NOTIFICATION")) {
+                $request->merge(['advertiser' => session()->get('SEND_NOTIFICATION')['advertiser']]);
+            } else {
+                if (!$request->advertiser || !is_array($request->advertiser) || empty($request->advertiser)) {
+                    $notify[] = ['error', "Ensure that the user field is populated when sending an email to the designated advertiser group"];
+                    return back()->withNotify($notify);
+                }
+            }
+        }
+
+        $scope          = $request->being_sent_to;
+        $advertiserQuery      = Advertiser::oldest()->active()->$scope();
+
+        if (session()->has("SEND_NOTIFICATION")) {
+            $totalAdvertiserCount = session('SEND_NOTIFICATION')['total_user'];
+        } else {
+            $totalAdvertiserCount = (clone $advertiserQuery)->count() - ($request->start-1);
+        }
+
+
+        if ($totalAdvertiserCount <= 0) {
+            $notify[] = ['error', "Notification recipients were not found among the selected user base."];
+            return back()->withNotify($notify);
+        }
+
+
+        $imageUrl = null;
+
+        if ($request->via == 'push' && $request->hasFile('image')) {
+            if (session()->has("SEND_NOTIFICATION")) {
+                $request->merge(['image' => session()->get('SEND_NOTIFICATION')['image']]);
+            }
+            if ($request->hasFile("image")) {
+                $imageUrl = fileUploader($request->image, getFilePath('push'));
+            }
+        }
+
+        $advertisers = (clone $advertiserQuery)->skip($request->start - 1)->limit($request->batch)->get();
+
+        foreach ($advertisers as $user) {
+            notify($user, 'DEFAULT', [
+                'subject' => $request->subject,
+                'message' => $request->message,
+            ], [$request->via], pushImage: $imageUrl);
+        }
+
+        return $this->sessionForNotification($totalAdvertiserCount, $request);
+    }
+
+
+    private function sessionForNotification($totalAdvertiserCount, $request)
+    {
+        if (session()->has('SEND_NOTIFICATION')) {
+            $sessionData                = session("SEND_NOTIFICATION");
+            $sessionData['total_sent'] += $sessionData['batch'];
+        } else {
+            $sessionData               = $request->except('_token');
+            $sessionData['total_sent'] = $request->batch;
+            $sessionData['total_advertiser'] = $totalAdvertiserCount;
+        }
+
+        $sessionData['start'] = $sessionData['total_sent'] + 1;
+
+        if ($sessionData['total_sent'] >= $totalAdvertiserCount) {
+            session()->forget("SEND_NOTIFICATION");
+            $message = ucfirst($request->via) . " notifications were sent successfully";
+            $url     = route("admin.advertiser.notification.all");
+        } else {
+            session()->put('SEND_NOTIFICATION', $sessionData);
+            $message = $sessionData['total_sent'] . " " . $sessionData['via'] . "  notifications were sent successfully";
+            $url     = route("admin.advertiser.notification.all") . "?email_sent=yes";
+        }
+        $notify[] = ['success', $message];
+        return redirect($url)->withNotify($notify);
     }
 
     public function countBySegment($methodName){
@@ -306,7 +404,7 @@ class ManageAdvertisersController extends Controller
             'more'    => $advertisers->hasMorePages()
         ]);
     }
-
+    
     public function notificationLog($id)
     {
         $advertiser = Advertiser::findOrFail($id);

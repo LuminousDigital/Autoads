@@ -33,9 +33,9 @@ class ProcessController extends Controller
                 'email' => $user->email,
             ],
             'back_urls' => [
-                'success' => $deposit->success_url,
+                'success' => route('home').$deposit->success_url,
                 'pending' => '',
-                'failure' => $deposit->failed_url,
+                'failure' => route('home').$deposit->failed_url,
             ],
             'notification_url' =>  route('ipn.'.$alias),
             'auto_return' =>  'approved',

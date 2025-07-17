@@ -21,11 +21,11 @@ class ProcessController extends Controller
         $razorAcc = json_decode($deposit->gatewayCurrency()->gateway_parameter);
 
         //  API request and response for creating an order
-        $apiKey = $razorAcc->key_id;
-        $apiSecret = $razorAcc->key_secret;
+        $api_key = $razorAcc->key_id;
+        $api_secret = $razorAcc->key_secret;
 
         try {
-            $api = new Api($apiKey, $apiSecret);
+            $api = new Api($api_key, $api_secret);
             $order = $api->order->create(
                 array(
                     'receipt' => $deposit->trx,
@@ -63,7 +63,7 @@ class ProcessController extends Controller
 
         $alias = $deposit->gateway->alias;
 
-        $send['url'] = route('ipn.'.$alias) . '?order_id=' . encrypt($deposit->btc_wallet);
+        $send['url'] = route('ipn.'.$alias);
         $send['custom'] = $deposit->trx;
         $send['checkout_js'] = "https://checkout.razorpay.com/v1/checkout.js";
         $send['view'] = 'advertiser.payment.'.$alias;
@@ -73,15 +73,15 @@ class ProcessController extends Controller
 
     public function ipn(Request $request)
     {
-        $orderId = decrypt($request->order_id);
-        $deposit = Deposit::where('btc_wallet', $orderId)->orderBy('id', 'DESC')->first();
+
+        $deposit = Deposit::where('btc_wallet', $request->razorpay_order_id)->orderBy('id', 'DESC')->first();
         $razorAcc = json_decode($deposit->gatewayCurrency()->gateway_parameter);
 
         if (!$deposit) {
             $notify[] = ['error', 'Invalid request'];
         }
 
-        $sig = hash_hmac('sha256', $orderId . "|" . $request->razorpay_payment_id, $razorAcc->key_secret);
+        $sig = hash_hmac('sha256', $request->razorpay_order_id . "|" . $request->razorpay_payment_id, $razorAcc->key_secret);
         $deposit->detail = $request->all();
         $deposit->save();
 

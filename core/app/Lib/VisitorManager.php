@@ -23,8 +23,8 @@ class VisitorManager
 {
 
     /**
-     * Selects and returns the appropriate advertisement based on the publisher ID, ad type,
-     * and the visitor's location. If no suitable ad is found or certain checks fail,
+     * Selects and returns the appropriate advertisement based on the publisher ID, ad type, 
+     * and the visitor's location. If no suitable ad is found or certain checks fail, 
      * a default ad is returned.
      *
      * @param string $pubId Encrypted publisher ID.
@@ -35,6 +35,9 @@ class VisitorManager
 
     public function ad($pubId, $slug, $currentUrl)
     {
+
+
+
         $adType = AdType::where('slug', $slug)->enable()->first();
 
         if (!$adType) return 0;
@@ -47,6 +50,7 @@ class VisitorManager
         } catch (Exception $ex) {
             return $this->defaultAd($slug, $adWidth, $adHeight, gs('site_name'));
         }
+
 
         $publisher = Publisher::find($publisherId);
         if (!$publisher) {
@@ -71,6 +75,7 @@ class VisitorManager
         if (!$domain) {
             return $this->defaultAd($slug, $adWidth, $adHeight, gs('site_name'));
         }
+
 
         $queryAd = Advertise::where('ad_type_id', $adType->id)->where('status', Status::ACTIVE_ADVERTISE);
         if (gs('check_country')) {
@@ -108,6 +113,8 @@ class VisitorManager
         $advertiser = $ad->advertiser;
         $cost       = null;
 
+
+
         if ($ad->ad_type == 'impression' &&  $advertiser->impression_credit <= 0) {
             return $this->defaultAd($slug, $adWidth, $adHeight, gs('site_name'));
         }
@@ -116,6 +123,8 @@ class VisitorManager
         if (gs('check_country')  && $ad->countries->isNotEmpty()) {
             $cost = @$ad->countries()->active()->where('country_name', $countryName)->first()->cost;
         }
+
+
 
         $existIpLog = $existingIp->iplogs()->where('advertise_id', $ad->id)->where('time', '>=', Carbon::now()->subMinutes(gs('intervals'))->format('H:i:s'))->first();
 
@@ -163,7 +172,7 @@ class VisitorManager
 
 
 
-        return $this->randomAd($redirectUrl, $adImage, $adWidth, $adHeight, $ad->ad_type);
+        return $this->randomAd($redirectUrl, $adImage, $adWidth, $adHeight, gs('site_name'));
     }
 
     /**
@@ -290,7 +299,7 @@ class VisitorManager
 
     /**
      * Returns the HTML for displaying a randomly selected advertisement.
-     * This method generates the ad's image, sets the redirection URL for clicks,
+     * This method generates the ad's image, sets the redirection URL for clicks, 
      * and includes a small label indicating the advertisement is served by the site.
      *
      * @param string $redirectUrl The URL to redirect to when the ad is clicked.
@@ -300,17 +309,13 @@ class VisitorManager
      * @param string $siteName The name of the site serving the ad.
      * @return string HTML for the selected advertisement.
      */
-    public function randomAd($redirectUrl, $adImage, $width, $height, $adType)
+    public function randomAd($redirectUrl, $adImage, $width, $height, $siteName)
     {
-        if($adType == 'click'){
-            return "<a href='" . $redirectUrl . "' target='_blank'><img src='" . $adImage . "' width='" . $width . "' height='" . $height . "'/></a><strong style='background-color:#e6e6e6;position:absolute;right:0;top:0;font-size:10px;color:#666666;padding:4px; margin-right:15px;'>Ad by " . gs('site_name') . "</strong><span onclick='hideAdverTiseMent(this)' style='position:absolute; right:0;top:0;width:15px;height:23px;background-color:#f00;font-size: 15px;color: #fff;border-radius:1px;cursor:pointer;'>x</span>";
-       }else{
-           return "<img src='" . $adImage . "' width='" . $width . "' height='" . $height . "'/><strong style='background-color:#e6e6e6;position:absolute;right:0;top:0;font-size:10px;color:#666666;padding:4px; margin-right:15px;'>Ad by " . gs('site_name') . "</strong><span onclick='hideAdverTiseMent(this)' style='position:absolute; right:0;top:0;width:15px;height:23px;background-color:#f00;font-size: 15px;color: #fff;border-radius:1px;cursor:pointer;'>x</span>";
-       }
+        return "<a href='" . $redirectUrl . "' target='_blank'><img src='" . $adImage . "' width='" . $width . "' height='" . $height . "'/></a><strong style='background-color:#e6e6e6;position:absolute;right:0;top:0;font-size:10px;color:#666666;padding:4px; margin-right:15px;'>Ad by " . $siteName . "</strong><span onclick='hideAdverTiseMent(this)' style='position:absolute; right:0;top:0;width:15px;height:23px;background-color:#f00;font-size: 15px;color: #fff;border-radius:1px;cursor:pointer;'>x</span>";
     }
 
     /**
-     *
+     * 
      * Detects the country based on the provided IP address using various services.
      * The method supports multiple services for IP-based country detection, such as:
      * - **ipstack**

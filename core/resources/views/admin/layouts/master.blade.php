@@ -23,7 +23,6 @@
     @stack('style')
 </head>
 <body>
-
 @yield('content')
 
 

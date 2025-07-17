@@ -4,8 +4,8 @@
     <div class="row">
         <div class="col-12">
             <div class="row gy-4">
-
-
+        
+                
                 <div class="col-xxl-3 col-sm-6">
                     <x-widget
                         style="7"
@@ -60,7 +60,7 @@
             </div>
 
             <div class="d-flex flex-wrap gap-3 mt-4">
-
+        
 
                 <div class="flex-fill">
                     <a href="{{ route('admin.report.login.history.publisher') }}?search={{ $publisher->username }}"
@@ -89,7 +89,7 @@
                         </button>
                     @endif
                 </div>
-
+                
                 @if($publisher->kyc_data)
                 <div class="flex-fill">
                     <a href="{{ route('admin.publisher.kyc.details', $publisher->id) }}" target="_blank" class="btn btn--dark btn--shadow w-100 btn-lg">
@@ -99,7 +99,7 @@
                 @endif
             </div>
 
-
+           
             <div class="card mt-30">
                 <div class="card-header">
                     <h5 class="card-title mb-0">@lang('Information of') {{$publisher->fullname}}</h5>
@@ -126,14 +126,14 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>@lang('Email')</label>
+                                    <label>@lang('Email') </label>
                                     <input class="form-control" type="email" name="email" value="{{$publisher->email}}" required>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>@lang('Mobile Number')</label>
+                                    <label>@lang('Mobile Number') </label>
                                     <div class="input-group ">
                                         <span class="input-group-text mobile-code">+{{ $publisher->dial_code }}</span>
                                         <input type="number" name="mobile" value="{{ $publisher->mobile }}" id="mobile" class="form-control checkUser" required>
@@ -210,7 +210,7 @@
                                     <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success" data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')" data-off="@lang('Unverified')" name="kv" @if($publisher->kv == Status::KYC_VERIFIED) checked @endif>
                                 </div>
                             </div>
-
+                       
                             <div class="col-md-12">
                                 <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')
                                 </button>

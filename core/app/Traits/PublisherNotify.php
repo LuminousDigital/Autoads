@@ -8,9 +8,9 @@ trait PublisherNotify
     public static function notifyToPublisher(){
         return [
             'allPublishers'              => 'All Publishers',
-            'selected'                   => 'Selected Publishers',
-            'kycUnverified'              => 'Kyc Unverified Publishers',
-            'kycPending'                 => 'Kyc Pending Publishers',
+            'selectedPublishers'         => 'Selected Publishers',
+            'kycUnverified'         => 'Kyc Unverified Publishers',
+            'kycPending'            => 'Kyc Pending Publishers',
             'twoFaDisablePublishers'     => '2FA Disable Publisher',
             'twoFaEnablePublishers'      => '2FA Enable Publisher',
             'hasWithdrawPublishers'      => 'Withdraw Publishers',
@@ -23,9 +23,9 @@ trait PublisherNotify
         ];
     }
 
-    public function scopeSelected($query)
+    public function scopeSelectedPublishers($query)
     {
-        return $query->whereIn('id', request()->entities ?? []);
+        return $query->whereIn('id', request()->publisher ?? []);
     }
 
     public function scopeAllPublishers($query)

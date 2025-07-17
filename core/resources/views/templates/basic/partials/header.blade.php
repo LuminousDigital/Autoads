@@ -54,7 +54,7 @@
                                 <div class="custom--dropdown">
                                     @if (session('lang'))
                                         <div class="custom--dropdown__selected dropdown-list__item">
-                                            <a href="javascript:void(0)" class="thumb">
+                                            <a href="#" class="thumb">
                                                 <img src="{{ getImage(getFilePath('language') . '/' . $langs->where('code', session('lang'))->first()->image, getFileSize('language')) }}"
                                                     alt="image">
                                             </a>
@@ -63,7 +63,7 @@
                                     @else
                                         @php $default = $langs->where('is_default',Status::YES)->first() @endphp
                                         <div class="custom--dropdown__selected dropdown-list__item">
-                                            <a href="javascript:void(0)" class="thumb">
+                                            <a href="#" class="thumb">
                                                 <img src="{{ getImage(getFilePath('language') . '/' . @$default->image, getFileSize('language')) }}"
                                                     alt="image">
                                             </a>
@@ -140,7 +140,7 @@
                             <div class="custom--dropdown">
                                 @if (session('lang'))
                                     <div class="custom--dropdown__selected dropdown-list__item">
-                                        <a href="javascript:void(0)" class="thumb">
+                                        <a href="#" class="thumb">
                                             <img src="{{ getImage(getFilePath('language') . '/' . $langs->where('code', session('lang'))->first()->image, getFileSize('language')) }}"
                                                 alt="image"></a>
                                         <span class="text"> {{ strtoupper(session('lang')) }} </span>
@@ -148,7 +148,7 @@
                                 @else
                                     @php $default = $langs->where('is_default',Status::YES)->first() @endphp
                                     <div class="custom--dropdown__selected dropdown-list__item">
-                                        <a href="javascript:void(0)" class="thumb">
+                                        <a href="#" class="thumb">
                                             <img src="{{ getImage(getFilePath('language') . '/' . @$default->image, getFileSize('language')) }}"
                                                 alt="image"></a>
                                         <span class="text"> {{ strtoupper(@$default->code) }} </span>

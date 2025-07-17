@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Lib\RequiredConfig;
 use App\Models\AdType;
 use Illuminate\Http\Request;
 
@@ -40,8 +39,6 @@ class TypeController extends Controller
         $adType->height  = $request->height;
         $adType->slug    = $request->slug;
         $adType->save();
-
-        RequiredConfig::configured('ad_type');
 
         $notify[] = ['success', $notification];
         return back()->withNotify($notify);

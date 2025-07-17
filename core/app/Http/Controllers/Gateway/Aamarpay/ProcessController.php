@@ -24,7 +24,7 @@ class ProcessController extends Controller {
 
         $data['success_url'] = route('ipn.' . $alias);
         $data['fail_url']    = route('ipn.' . $alias);
-        $data['cancel_url']  = $deposit->failed_url;
+        $data['cancel_url']  = route('advertiser.dashboard');
 
         $data['amount']                     = round($deposit->final_amount);
         $data['amount_vatratio']            = 0;

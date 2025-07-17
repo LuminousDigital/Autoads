@@ -80,7 +80,7 @@
             var emptyArea = $('.emptyArea');
             var emptyHtml = `<div class="searchItem text-center mt-4"><div class="empty-notification-list text-center">
                         <img src="{{ getImage('assets/images/empty_list.png') }}" alt="empty">
-                        <h5 class="text-muted">@lang('No search result found')</h5>
+                        <h5 class="text-muted">@lang('No notification found.')</h5>
                     </div></div>`;
 
             searchInput.on('input', function() {

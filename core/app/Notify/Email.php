@@ -38,13 +38,9 @@ class Email extends NotifyProcess implements Notifiable{
     */
 	public function send(){
 
-        if (!gs('en')) {
-			return false;
-		}
-
 		//get message from parent
 		$message = $this->getMessage();
-		if ($message) {
+		if (gs('en') && $message) {
 			//Send mail
 			$methodName = gs('mail_config')->name;
 			$method = $this->mailMethods($methodName);
@@ -78,7 +74,7 @@ class Email extends NotifyProcess implements Notifiable{
         $sentFromName = $this->getEmailFrom()['name'];
         $sentFromEmail = $this->getEmailFrom()['email'];
 		$headers = "From: $sentFromName <$sentFromEmail> \r\n";
-	    $headers .= "Reply-To: $sentFromName <$sentFromEmail> \r\n";
+	    $headers .= "From: $sentFromName <$sentFromEmail> \r\n";
 	    $headers .= "MIME-Version: 1.0\r\n";
 	    $headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		@mail($this->email, $this->subject, $this->finalMessage, $headers);

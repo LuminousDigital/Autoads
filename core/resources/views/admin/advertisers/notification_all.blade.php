@@ -12,7 +12,7 @@
                 <div class="col-sm-7">
                     <div class="row gy-4 justify-content-center">
                         <div class="col-sm-6">
-                            <x-widget link="javascript:void(0)" style="6" icon="fas fa-list" :title="$viaText . ' should be sent'" value="{{ @$sessionData['total_entities'] }}"
+                            <x-widget link="javascript:void(0)" style="6" icon="fas fa-list" :title="$viaText . ' should be sent'" value="{{ @$sessionData['total_advertiser'] }}"
                                 bg="primary" :viewMoreIcon=false />
                         </div>
                         <div class="col-sm-6">
@@ -21,7 +21,7 @@
                         </div>
                         <div class="col-sm-6">
                             <x-widget link="javascript:void(0)" style="6" icon="fa-solid fa-paper-plane" :title="$viaText . ' has yet to be sent'" :viewMoreIcon=false
-                                value="{{ @$sessionData['total_entities'] - @$sessionData['total_sent'] }}" bg="warning" />
+                                value="{{ @$sessionData['total_advertiser'] - @$sessionData['total_sent'] }}" bg="warning" />
                         </div>
                         <div class="col-sm-6">
                             <x-widget link="javascript:void(0)" style="6" icon="fas fa-envelope" :title="$viaText . ' per batch'" value="{{ @$sessionData['batch'] }}"
@@ -46,7 +46,7 @@
                                             @lang(' second delay. Avoid closing or refreshing the browser.')
                                         </p>
                                         <p class="text--primary">
-                                            @lang(' ' . @$sessionData['total_sent'] . ' out of ' . @$sessionData['total_entities'] . ' ' . $viaName . ' were successfully transmitted')
+                                            @lang(' ' . @$sessionData['total_sent'] . ' out of ' . @$sessionData['total_advertiser'] . ' ' . $viaName . ' were successfully transmitted')
                                         </p>
                                     </div>
                                 </div>
@@ -195,11 +195,11 @@
                 getAdvertiserCount(methodName);
                 methodName = methodName.toUpperCase();
 
-                if (methodName == 'SELECTED') {
+                if (methodName == 'SELECTEDADVERTISERS') {
                     $('.input-append').html(`
                     <div class="form-group" id="user_list_wrapper">
                         <label class="required">@lang('Select Advertiser')</label>
-                        <select name="entities[]"  class="form-control" id="user_list" required multiple >
+                        <select name="advertiser[]"  class="form-control" id="user_list" required multiple >
                             <option disabled>@lang('Select One')</option>
                         </select>
                     </div>
@@ -272,7 +272,7 @@
 
             function getAdvertiserCount(methodName) {
                 var methodNameUpper = methodName.toUpperCase();
-                if (methodNameUpper == 'SELECTEDAD' || methodNameUpper == 'ALLADVERTISERS' || methodNameUpper == 'TOPDEPOSITEDADVERTISERS' ||
+                if (methodNameUpper == 'SELECTEDADVERTISERS' || methodNameUpper == 'ALLADVERTISERS' || methodNameUpper == 'TOPDEPOSITEDADVERTISERS' ||
                     methodNameUpper == 'NOTLOGINADVERTISERS') {
                     $('.userCount').text(0);
                     $('.userCountText').addClass('d-none');

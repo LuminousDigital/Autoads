@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Lib\RequiredConfig;
 use App\Constants\Status;
+use App\Http\Controllers\Controller;
 use App\Lib\VisitorManager;
 use App\Models\Frontend;
 use App\Rules\FileTypeValidate;
@@ -12,6 +11,9 @@ use Illuminate\Http\Request;
 
 class GeneralSettingController extends Controller
 {
+
+    
+
     public function systemSetting()
     {
         $pageTitle = 'System Settings';
@@ -76,7 +78,6 @@ class GeneralSettingController extends Controller
         $timezoneFile = config_path('timezone.php');
         $content = '<?php $timezone = "' . $timezone . '" ?>';
         file_put_contents($timezoneFile, $content);
-        RequiredConfig::configured('general_setting');
         $notify[] = ['success', 'General setting updated successfully'];
         return back()->withNotify($notify);
     }
@@ -150,8 +151,6 @@ class GeneralSettingController extends Controller
                 return back()->withNotify($notify);
             }
         }
-
-        RequiredConfig::configured('logo_favicon');
         $notify[] = ['success', 'Logo & favicon updated successfully'];
         return back()->withNotify($notify);
     }

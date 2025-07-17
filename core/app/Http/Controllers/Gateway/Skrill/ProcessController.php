@@ -22,9 +22,9 @@ class ProcessController extends Controller
         $val['pay_to_email'] = trim($skrillAcc->pay_to_email);
         $val['transaction_id'] = "$deposit->trx";
 
-        $val['return_url'] = $deposit->success_url;
+        $val['return_url'] = route('home').$deposit->success_url;
         $val['return_url_text'] = "Return $general->site_name";
-        $val['cancel_url'] = $deposit->failed_url;
+        $val['cancel_url'] = route('home').$deposit->failed_url;
         $val['status_url'] = route('ipn.'.$deposit->gateway->alias);
         $val['language'] = 'EN';
         $val['amount'] = round($deposit->final_amount,2);

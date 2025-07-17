@@ -23,8 +23,8 @@ class ProcessController extends Controller
         $val['item_name'] = "Payment To $general->site_name Account";
         $val['custom'] = "$deposit->trx";
         $val['amount'] = round($deposit->final_amount,2);
-        $val['return'] = $deposit->success_url;
-        $val['cancel_return'] = $deposit->failed_url;
+        $val['return'] = route('home').$deposit->success_url;
+        $val['cancel_return'] = route('home').$deposit->failed_url;
         $val['notify_url'] = route('ipn.'.$deposit->gateway->alias);
         $send['val'] = $val;
         $send['view'] = 'advertiser.payment.redirect';

@@ -35,12 +35,10 @@ class Sms extends NotifyProcess implements Notifiable{
     * @return void|bool
     */
 	public function send(){
-        if (!gs('sn')) {
-			return false;
-		}
+
 		//get message from parent
 		$message = $this->getMessage();
-		if ($message) {
+		if (gs('sn') && $message) {
 			try {
 				$gateway = gs('sms_config')->name;
                 if($this->mobile){

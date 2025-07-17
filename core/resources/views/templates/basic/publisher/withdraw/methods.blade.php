@@ -22,7 +22,7 @@
                                     <input class="payment-item__radio gateway-input" id="{{ titleToKey($data->name) }}"
                                         hidden data-gateway='@json($data)' type="radio" name="method_code"
                                         value="{{ $data->id }}"
-                                        @checked(old('method_code',$loop->first) == $data->id)
+                                        @if (old('method_code')) @checked(old('method_code') == $data->id) @else @checked($loop->first) @endif
                                         data-min-amount="{{ showAmount($data->min_limit) }}"
                                         data-max-amount="{{ showAmount($data->max_limit) }}">
                                 </label>
